@@ -1,74 +1,44 @@
-import { readFileService, writeFileService } from "../services/file.service.js"
+import {
+  readFileService,
+  writeFileService,
+  deleteFileService
+} from "../services/file.service.js"
 
 export const readFileController = async (req, res) => {
   try {
     const { name } = req.query
-
     const content = await readFileService(name)
 
-    return res.json({
-      fileName: name,
-      content
-    })
-
+    res.json({ fileName: name, content })
   } catch (error) {
-    if (error.message === "Missing file name") {
-      return res.status(400).json({
-        message: "Missing file name"
-      })
-    }
-
-    return res.status(404).json({
-      message: "File not found"
+    res.status(error.statusCode || 500).json({
+      message: error.message
     })
   }
 }
 
 export const writeFileController = async (req, res) => {
-    try {
-        const {fileName, content} = req.params.body
+  try {
+    const { fileName, content } = req.body
+    const result = await writeFileService(fileName, content)
 
-        const result = await writeFileService(fileName, content)
-
-        return res.json(result)
-    }
-
-    catch (error) {
-        if(error.message === "Invalid input"){
-            return res.status(400).json({
-                message: "Filename or Content must be required"
-            })
-        }
-
-        return res.status(500).json({
-            message: "Failed to write file"
-        })
-    }
+    res.json(result)
+  } catch (error) {
+    res.status(error.statusCode || 500).json({
+      message: error.message
+    })
+  }
 }
 
 export const deleteFileController = async (req, res) => {
   try {
     const { name } = req.params
-
     const result = await deleteFileService(name)
 
-    return res.json(result)
-
+    res.json(result)
   } catch (error) {
-    if (error.message === "Missing file name") {
-      return res.status(400).json({
-        message: "Missing file name"
-      })
-    }
-
-    if (error.message === "File not found") {
-      return res.status(404).json({
-        message: "No such file or directory"
-      })
-    }
-
-    return res.status(500).json({
-      message: "Failed to delete file"
+    res.status(error.statusCode || 500).json({
+      message: error.message
     })
   }
 }
