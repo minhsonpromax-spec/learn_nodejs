@@ -7,7 +7,9 @@ import {
 
 import {successResponse} from "../utils/response.js"
 
-export const getTodosController = (req, res) => {
+export const getTodosController = async (req, res, next) => {
+    try{
+    const title = req.query.title
     const page = Number(req.query.page) || 1
     const limit = Number(req.query.limit) || 5
     const status = req.query.status
@@ -15,28 +17,48 @@ export const getTodosController = (req, res) => {
     const {
       data,
       pagination
-    } = getTodosService(status, page, limit)
-
+    } = await getTodosService(title, status, page, limit)
+    console.log('data [controller]:: ',data);
     return successResponse(res, data, {pagination})
+    }
+    catch(error){
+        console.log("error:", error);
+        next(error)
+    }
 }
 
-export const createTodoController = (req, res) => {
-    const { name, time, status } = req.body
+export const createTodoController = (req, res, next) => {
+    try{
+        const { title, time, status } = req.body
 
-    const result = createTodoService(name, time, status)
+        const result = createTodoService(title, time, status)
 
-    return successResponse(res, result)
+        return successResponse(res, result)
+    }
+    catch(error){
+        next(error)
+    }
 }
 
-export const updateTodoController = (req, res) => {
-    const id = Number(req.params.id)
-    const updateData = req.body
-    const result = updateTodoService(id, updateData)
-    return successResponse(res, result)
+export const updateTodoController = (req, res, next) => {
+    try{
+        const id = Number(req.params.id)
+        const updateData = req.body
+        const result = updateTodoService(id, updateData)
+        return successResponse(res, result)
+    }
+    catch(error){
+        next(error)
+    }
 }
 
-export const deleteTodoController = (req, res) => {
-    const id = Number(req.params.id)
-    const result = deleteTodoService(id)
-    return successResponse(res, result)
+export const deleteTodoController = (req, res, next) => {
+    try{
+        const id = Number(req.params.id)
+        const result = deleteTodoService(id)
+        return successResponse(res, result)
+    }
+    catch(error){
+        next(error)
+    }
 }

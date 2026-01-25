@@ -1,8 +1,14 @@
 import fs from "fs/promises"
 import path from "path"
+import { fileURLToPath } from 'url'
+const __filename = fileURLToPath(import.meta.url)
+const __dirname = path.dirname(__filename)
 
 export const requestLogger = async (req, res, next) => {
   const logPath = path.join(__dirname, "../data/log.txt")
+
+  const safeBody = { ...req.body };
+  delete safeBody.password
 
   const logData = {
     time: new Date().toISOString(),
@@ -10,7 +16,7 @@ export const requestLogger = async (req, res, next) => {
     route: req.originalUrl,
     params: req.params,
     query: req.query,
-    body: req.body
+    body: safeBody
   }
 
   try {

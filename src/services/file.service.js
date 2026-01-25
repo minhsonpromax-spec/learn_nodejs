@@ -1,6 +1,10 @@
 import fs from "fs/promises"
 import path from "path"
-import { AppError } from "../utils/appError.js"
+import { fileURLToPath } from 'url';
+import { AppError } from "../exceptions/app-error.js";
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename); // bởi vì es moudle hiện đại không dùng dirname
 
 const DATA_DIR = path.join(__dirname, "../data")
 
@@ -28,7 +32,7 @@ export const writeFileService = async (fileName, content) => {
 
   const filePath = path.join(DATA_DIR, fileName)
 
-  await fs.writeFile(filePath, content, "utf8")
+  await fs.appendFile(filePath, content, "utf8")
 
   return {
     fileName,
@@ -36,7 +40,7 @@ export const writeFileService = async (fileName, content) => {
   }
 }
 
-export const deleteFileService = async (fileName) => {
+export const deleteFileService = async (fileName) => { 
   if (!fileName) {
     throw new AppError("Missing file name", 400)
   }

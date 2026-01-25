@@ -3,42 +3,48 @@ import {
   writeFileService,
   deleteFileService
 } from "../services/file.service.js"
+import { successResponse } from "../utils/response.js"
 
-export const readFileController = async (req, res) => {
+export const readFileController = async (req, res, next) => {
   try {
-    const { name } = req.query
-    const content = await readFileService(name)
+    const {fileName} = req.params
+    const content = await readFileService(fileName)
 
-    res.json({ fileName: name, content })
-  } catch (error) {
-    res.status(error.statusCode || 500).json({
-      message: error.message
+    return successResponse(res, { fileName, content }, { 
+      status: 200,
+      message: "Read file successfully" 
     })
+  } catch (error) {
+    next(error)
   }
 }
 
-export const writeFileController = async (req, res) => {
+export const writeFileController = async (req, res, next) => {
+  console.log("Wrote!")
   try {
-    const { fileName, content } = req.body
+    const {fileName} = req.params
+    const { content } = req.body
     const result = await writeFileService(fileName, content)
 
-    res.json(result)
-  } catch (error) {
-    res.status(error.statusCode || 500).json({
-      message: error.message
+    return successResponse(res, result, { 
+      status: 201, 
+      message: "Write file successfully" 
     })
+  } catch (error) {
+    next(error)
   }
 }
 
-export const deleteFileController = async (req, res) => {
+export const deleteFileController = async (req, res, next) => {
   try {
-    const { name } = req.params
-    const result = await deleteFileService(name)
+    const {fileName} = req.params
+    const result = await deleteFileService(fileName)
 
-    res.json(result)
-  } catch (error) {
-    res.status(error.statusCode || 500).json({
-      message: error.message
+    return successResponse(res, result, { 
+      status: 204,
+      message: "Xóa file thành công" 
     })
+  } catch (error) {
+    next(error)
   }
 }

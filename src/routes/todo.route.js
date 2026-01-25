@@ -9,10 +9,10 @@ import {
 
 const router = express.Router();
 
-router.get("/todos", getTodosController)
-router.post("/todos", createTodoController);
-router.put("/todos/:id", updateTodoController);
-router.delete("/todos/:id", deleteTodoController);
+router.get("", getTodosController)
+router.post("", createTodoController);
+router.put("/:id", updateTodoController);
+router.delete("/:id", deleteTodoController);
 
 export default router;
 

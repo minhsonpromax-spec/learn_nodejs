@@ -3,8 +3,8 @@ import { deleteFileController, readFileController, writeFileController } from ".
 
 const router = express.Router()
 
-router.get("/files/read", readFileController)
-router.post("/files/write", writeFileController)
-router.delete("files/:", deleteFileController)
+router.get("/read/:fileName", readFileController)
+router.post("/write/:fileName", writeFileController)
+router.delete("/:fileName", deleteFileController)
 
 export default router
