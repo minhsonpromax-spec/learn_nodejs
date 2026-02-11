@@ -13,7 +13,15 @@ export const getTodosService = async (title, status, page = 1, limit = 5) => { /
   }
 
   let offset = (page - 1) * limit
-  const {count, rows} = await todos.findAndCountAll({where, raw: true, limit, offset})
+  
+  const {count, rows} = await todos.findAndCountAll({
+    where, 
+    raw: true, 
+    order: [["createdAt", "DESC"]], 
+    limit, 
+    offset
+  })
+
   const totalPages = Math.ceil(count / limit)
   return {
     data:rows,
